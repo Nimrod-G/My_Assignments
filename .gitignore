@@ -45,3 +45,11 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+target/my_assignments-1.0-SNAPSHOT.jar
+logs/propertieslogs.log
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+*.class
+target/*
+.idea/*
+My_Assignments.iml
