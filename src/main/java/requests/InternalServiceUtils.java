@@ -53,11 +53,12 @@ public class InternalServiceUtils {
 
     /**
      *
-     * @param directoryPath    The directory path
-     * @return  A list of files names in the directory
+     * @param directoryPath    The directory full path
+     * @param isByFullPath     True to get the files by their full path / false - to get the files by name
+     * @return  A List of the directory's files or an empty list if no files exists
      * @throws IOException
      */
-    public static List<String> getDirectoryFiles(String directoryPath) throws IOException {
+    public static List<String> getDirectoryFiles(String directoryPath, boolean isByFullPath) throws IOException {
         AutomationLogger.getLog().info("Trying getting all files in a directory: " + directoryPath);
         List<String> filesInDirectory = new ArrayList<>();
 
@@ -65,7 +66,11 @@ public class InternalServiceUtils {
             try (Stream<Path> filePathStream = Files.walk(Paths.get(directoryPath))) {
                 filePathStream.forEach(filePath -> {
                     if (Files.isRegularFile(filePath)) {
-                        filesInDirectory.add(filePath.toString());
+                        if (isByFullPath) {
+                            filesInDirectory.add(filePath.toString());
+                        } else {
+                            filesInDirectory.add(filePath.getFileName().toString());
+                        }
                     }
                 });
             }
@@ -87,13 +92,24 @@ public class InternalServiceUtils {
      * @throws NoSuchAlgorithmException
      */
     public static Boolean isMd5FileHashExistsInDirectory(String md5FileHash, String directoryPath) throws IOException, NoSuchAlgorithmException {
-        List<String> directoryFiles = getDirectoryFiles(directoryPath);
+        List<String> directoryFiles = getDirectoryFiles(directoryPath, true);
 
         for (String filePath : directoryFiles) {
             String currentMd5Hash = getFileMd5(filePath);
 
             if (md5FileHash.equals(currentMd5Hash)) {
                 AutomationLogger.getLog().info("File hash: " + md5FileHash + " has been found related with file path: " + filePath);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Boolean isFileExistsInADirectory(String directoryPath, String fileName) throws IOException {
+        List<String> directoryFiles = getDirectoryFiles(directoryPath, false);
+
+        for (String file : directoryFiles) {
+            if (file.equalsIgnoreCase(fileName)) {
                 return true;
             }
         }
