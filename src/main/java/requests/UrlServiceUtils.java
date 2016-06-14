@@ -8,6 +8,7 @@ import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 
 public class UrlServiceUtils {
 
@@ -18,7 +19,7 @@ public class UrlServiceUtils {
      * @throws NoSuchAlgorithmException
      * @throws IOException
      */
-    public static String getMd5FromUrlFile(String urlInput) throws NoSuchAlgorithmException, IOException {
+    public static Optional<String> getMd5FromUrlFile(String urlInput) throws NoSuchAlgorithmException, IOException {
         try {
             AutomationLogger.getLog().info("Trying to get url input md5 hash: " + urlInput);
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -27,7 +28,7 @@ public class UrlServiceUtils {
                 is = new URL(urlInput).openStream();
             } catch (FileNotFoundException e) {
                 AutomationLogger.getLog().error("The file you are looking for: " + urlInput + " doesn't exists", e);
-                return null;
+                return Optional.empty();
             }
 
             try {
@@ -47,7 +48,7 @@ public class UrlServiceUtils {
                         Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(
                                 1));
             }
-            return sb.toString();
+            return Optional.of(sb.toString());
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);

@@ -15,6 +15,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,11 +24,11 @@ public class InternalServiceUtils {
     /**
      *
      * @param filePath    The file path
-     * @return  The file MD5 of null if the file path doesn't exists
+     * @return  The file MD5 or null if the file path doesn't exists
      * @throws NoSuchAlgorithmException
      * @throws IOException
      */
-    public static String getFileMd5(String filePath) throws NoSuchAlgorithmException, IOException {
+    public static Optional<String> getFileMd5(String filePath) throws NoSuchAlgorithmException, IOException {
         AutomationLogger.getLog().info("Trying getting MD5 hash from file: " + filePath);
         MessageDigest md = MessageDigest.getInstance("MD5");
         InputStream inputStream;
@@ -35,7 +36,7 @@ public class InternalServiceUtils {
             inputStream = Files.newInputStream(Paths.get(filePath));
         } catch (NoSuchFileException e) {
             AutomationLogger.getLog().error("No such file path: " + filePath, e);
-            return null;
+            return Optional.empty();
         }
 
         DigestInputStream dis = new DigestInputStream(inputStream, md);
@@ -48,7 +49,7 @@ public class InternalServiceUtils {
         byte[] output = md.digest();
         BigInteger bi = new BigInteger(1, output);
         String hashText = bi.toString(16);
-        return hashText;
+        return Optional.of(hashText);
     }
 
     /**
@@ -95,7 +96,7 @@ public class InternalServiceUtils {
         List<String> directoryFiles = getDirectoryFiles(directoryPath, true);
 
         for (String filePath : directoryFiles) {
-            String currentMd5Hash = getFileMd5(filePath);
+            String currentMd5Hash = getFileMd5(filePath).orElse("");
 
             if (md5FileHash.equals(currentMd5Hash)) {
                 AutomationLogger.getLog().info("File hash: " + md5FileHash + " has been found related with file path: " + filePath);
