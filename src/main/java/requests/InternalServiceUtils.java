@@ -1,8 +1,8 @@
 package requests;
 
 import logs.AutomationLogger;
+import exceptionsInfra.SystemException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -16,7 +16,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class InternalServiceUtils {
@@ -25,12 +24,18 @@ public class InternalServiceUtils {
      *
      * @param filePath    The file path
      * @return  The file MD5 or null if the file path doesn't exists
-     * @throws NoSuchAlgorithmException
      * @throws IOException
      */
-    public static Optional<String> getFileMd5(String filePath) throws NoSuchAlgorithmException, IOException {
+    public static Optional<String> getFileMd5(String filePath) throws IOException {
         AutomationLogger.getLog().info("Trying getting MD5 hash from file: " + filePath);
-        MessageDigest md = MessageDigest.getInstance("MD5");
+        MessageDigest md;
+
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException  e) {
+            throw new SystemException("The algorithm doesn't exists - possibly a bug ", e);
+        }
+
         InputStream inputStream;
         try {
             inputStream = Files.newInputStream(Paths.get(filePath));
@@ -90,9 +95,8 @@ public class InternalServiceUtils {
      * @param directoryPath    The directory path
      * @return  True - if the md5 god found or False if the md5 didn't found
      * @throws IOException
-     * @throws NoSuchAlgorithmException
      */
-    public static Boolean isMd5FileHashExistsInDirectory(String md5FileHash, String directoryPath) throws IOException, NoSuchAlgorithmException {
+    public static Boolean isMd5FileHashExistsInDirectory(String md5FileHash, String directoryPath) throws IOException {
         List<String> directoryFiles = getDirectoryFiles(directoryPath, true);
 
         for (String filePath : directoryFiles) {
@@ -106,6 +110,13 @@ public class InternalServiceUtils {
         return false;
     }
 
+    /**
+     *
+     * @param directoryPath    The directory path
+     * @param fileName         The file name
+     * @return  True if the file name do exists or False otherwise
+     * @throws IOException
+     */
     public static Boolean isFileExistsInADirectory(String directoryPath, String fileName) throws IOException {
         List<String> directoryFiles = getDirectoryFiles(directoryPath, false);
 

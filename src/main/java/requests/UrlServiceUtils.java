@@ -1,5 +1,6 @@
 package requests;
 
+import exceptionsInfra.SystemException;
 import logs.AutomationLogger;
 import org.apache.commons.io.FilenameUtils;
 
@@ -16,55 +17,62 @@ public class UrlServiceUtils {
      * <p> Get file's MD5 hash code from URL address <p/>
      * @param urlInput    The JAR file url address
      * @return  The file MD5 or null if the file doesn't exists
-     * @throws NoSuchAlgorithmException
      * @throws IOException
      */
-    public static Optional<String> getMd5FromUrlFile(String urlInput) throws NoSuchAlgorithmException, IOException {
+    public static Optional<String> getMd5FromUrlFile(String urlInput) throws IOException {
+        AutomationLogger.getLog().info("Trying to get url input md5 hash: " + urlInput);
+        MessageDigest md;
+
         try {
-            AutomationLogger.getLog().info("Trying to get url input md5 hash: " + urlInput);
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            InputStream is;
-            try {
-                is = new URL(urlInput).openStream();
-            } catch (FileNotFoundException e) {
-                AutomationLogger.getLog().error("The file you are looking for: " + urlInput + " doesn't exists", e);
-                return Optional.empty();
-            }
-
-            try {
-                is = new DigestInputStream(is, md);
-
-                byte[] ignoredBuffer = new byte[8 * 1024];
-                while (is.read(ignoredBuffer) > 0) {}
-
-            } finally {
-                is.close();
-            }
-            byte[] digest = md.digest();
-            StringBuffer sb = new StringBuffer();
-
-            for (int i = 0; i < digest.length; i++) {
-                sb.append(
-                        Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(
-                                1));
-            }
-            return Optional.of(sb.toString());
-
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new SystemException("The algorithm doesn't exists - possibly a bug ", e);
         }
+        InputStream is;
+        try {
+            is = new URL(urlInput).openStream();
+        } catch (FileNotFoundException e) {
+            AutomationLogger.getLog().error("The file you are looking for: " + urlInput + " doesn't exists", e);
+            return Optional.empty();
+        }
+
+        try {
+            is = new DigestInputStream(is, md);
+
+            byte[] ignoredBuffer = new byte[8 * 1024];
+            while (is.read(ignoredBuffer) > 0) {
+            }
+
+        } finally {
+            is.close();
+        }
+        byte[] digest = md.digest();
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i < digest.length; i++) {
+            sb.append(
+                    Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(
+                            1));
+        }
+        return Optional.of(sb.toString());
     }
 
     /**
      * <p> The method gets a URL file and saves it on the directory-path if the file doesn't exists <p/>
      * @param urlInput         The JAR file url address
      * @param directoryPath    The directory in which we want to search the file existance
-     * @throws NoSuchAlgorithmException
      * @throws IOException
      */
-    public static void saveFileFromUrlIfNotExistsInDirectory(String urlInput, String directoryPath) throws NoSuchAlgorithmException, IOException {
+    public static void saveFileFromUrlIfNotExistsInDirectory(String urlInput, String directoryPath) throws IOException {
         AutomationLogger.getLog().info("Trying to get url input md5 hash: " + urlInput);
-        MessageDigest md = MessageDigest.getInstance("MD5");
+        MessageDigest md;
+
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new SystemException("The algorithm doesn't exists - possibly a bug ", e);
+        }
+
         InputStream is;
         try {
             is = new URL(urlInput).openStream();
