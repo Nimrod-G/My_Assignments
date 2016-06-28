@@ -94,9 +94,7 @@ public class UrlServiceUtils {
         StringBuffer sb = new StringBuffer();
 
         for (int i = 0; i < digest.length; i++) {
-            sb.append(
-                    Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(
-                            1));
+            sb.append(Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1));
         }
 
         // If the file md5 is not exists in the directory path - save it
