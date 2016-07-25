@@ -19,7 +19,7 @@ public class StatementExecute {
 
     public void deleteRecord(String tableName, String conditionalRecordName, String conditionalRecordValue) throws SQLException {
         String sql = "delete from " + tableName + " where " + conditionalRecordName + " = " + conditionalRecordValue;
-        execute(sql);
+        executeUpdate(sql);
     }
 
     public void insertNewRecordWithParameters(String tableName, List<String> columnsNames, List<String> values) throws SQLException {
@@ -44,7 +44,7 @@ public class StatementExecute {
         }
 
         String sql = "insert into " + tableName +" (" + columnsStr + ")" + " values " + "(" + valuesStr + ")";
-        execute(sql);
+        executeUpdate(sql);
     }
 
     public void updateRecord(String tableName, List<String> columnsNamesAndValues, String conditionalRecordNameAndValue) throws SQLException {
@@ -58,11 +58,11 @@ public class StatementExecute {
         }
 
         String sql = "update " + tableName + " set " + columns + " where " + conditionalRecordNameAndValue;
-        execute(sql);
+        executeUpdate(sql);
     }
 
-    private void execute(String sqlStatement) throws SQLException {
-        AutomationLogger.getLog().info("Executing statement: " + sqlStatement);
+    private void executeUpdate(String sqlStatement) throws SQLException {
+        AutomationLogger.getLog().info("Executing statement update: " + sqlStatement);
         statement.executeUpdate(sqlStatement);
     }
 }
