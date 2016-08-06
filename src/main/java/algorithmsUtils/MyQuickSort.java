@@ -1,4 +1,4 @@
-package sortUtils;
+package algorithmsUtils;
 
 /**
  * Created by Nimrod Golan on 30/07/2016.

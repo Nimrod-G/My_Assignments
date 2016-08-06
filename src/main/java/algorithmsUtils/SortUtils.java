@@ -1,4 +1,4 @@
-package sortUtils;
+package algorithmsUtils;
 
 public class SortUtils {
 
