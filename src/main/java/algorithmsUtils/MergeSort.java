@@ -10,7 +10,7 @@ public class MergeSort {
         if (list.length <= 1) {
             return list;
         } else {
-            // Splitting the list into a half
+            // Splitting the list into a halfs
             int[] first = new int[list.length/2];
             int[] second = new int[list.length - first.length];
 
