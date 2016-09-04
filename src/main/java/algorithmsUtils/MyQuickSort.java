@@ -61,7 +61,7 @@ public class MyQuickSort {
     public static void main(String a[]){
 
         MyQuickSort sorter = new MyQuickSort();
-        int[] input = {50,23,2,80,16,50,2,45,39,53,12};
+        int[] input = {48,23,2,80,16,50,2,45,39,53,12};
         sorter.sort(input);
         for(int i:input){
             System.out.print(i);
