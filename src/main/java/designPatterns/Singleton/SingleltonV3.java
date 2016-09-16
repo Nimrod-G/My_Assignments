@@ -13,7 +13,10 @@ public class SingleltonV3 {
     public static SingleltonV3 getInstance() {
         if (instance == null) {
             synchronized (SingleltonV3.class) {
-                instance =  new SingleltonV3();
+                // Double check
+                if (instance == null) {
+                    instance =  new SingleltonV3();
+                }
             }
         }
         return instance;

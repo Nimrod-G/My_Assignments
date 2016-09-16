@@ -1,7 +1,6 @@
 package manipulationUtils;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
 
 /**
  * Created by Nimrod Golan on 25/07/2016.
@@ -83,6 +82,107 @@ public class MyLinkedList {
         }
     }
 
+    public void removeDuplicates(Node head) {
+        HashSet<Integer> set = new HashSet<>();
+        Node previousNode = null;
+
+        while (head.next != null) {
+            if (set.contains(head.value)) {
+                previousNode.next = head.next;
+
+            } else {
+                set.add(head.value);
+                previousNode = head;
+            }
+            head = head.next;
+        }
+    }
+
+    public void removeDuplicated2(Node head) {
+        Node current = head;
+        while (current.next != null) {
+            Node runner = current;
+            while (runner.next != null) {
+                if (runner.next.value == current.value) {
+                    runner.next = runner.next.next;
+                } else {
+                    runner = runner.next;
+                }
+            }
+            current = current.next;
+        }
+    }
+
+    public void deleteNodeByValue(Node head, int value) {
+        Node temp = head;
+
+        while (temp.next != null) {
+            if (temp.next.value == value) {
+                temp.next = temp.next.next;
+            } else {
+                temp = temp.next;
+            }
+        }
+    }
+
+    public int returnTheNthElementFromLast(Node head, int n) {
+        if (head == null || head.next == null) {
+            return -1;
+        } else {
+            Node firstRunner = head;
+            Node secondRunner = head;
+
+            for (int i=1; i < n; i ++) {
+                firstRunner = firstRunner.next;
+            }
+
+            while (firstRunner.next != null) {
+                secondRunner = secondRunner.next;
+                firstRunner = firstRunner.next;
+            }
+            return secondRunner.value;
+        }
+    }
+
+    public Node partition(Node head, int x) {
+        Node beforeStart = null;
+        Node beforeEnd = null;
+        Node afterStart = null;
+        Node afterEnd = null;
+
+		/* Partition list */
+        while (head != null) {
+            Node next = head.next;
+            head.next = null;
+            if (head.value < x) {
+                if (beforeStart == null) {
+                    beforeStart = head;
+                    beforeEnd = beforeStart;
+                } else {
+                    beforeEnd.next = head;
+                    beforeEnd = head;
+                }
+            } else {
+                if (afterStart == null) {
+                    afterStart = head;
+                    afterEnd = afterStart;
+                } else {
+                    afterEnd.next = head;
+                    afterEnd = head;
+                }
+            }
+            head = next;
+        }
+
+		/* Merge before list and after list */
+        if (beforeStart == null) {
+            return afterStart;
+        }
+
+        beforeEnd.next = afterStart;
+        return beforeStart;
+    }
+
     public static void main(String[] args) {
         MyLinkedList myLinkedList = new MyLinkedList();
         Node head = new Node(4);
@@ -91,7 +191,10 @@ public class MyLinkedList {
         myLinkedList.addToTheLast(new Node(5));
         myLinkedList.addToTheLast(new Node(6));
         myLinkedList.addToTheLast(new Node(7));
-        myLinkedList.addWithIndex(7, 10);
+        myLinkedList.addToTheLast(new Node(5));
+        myLinkedList.addToTheLast(new Node(8));
+
+        Node partition = myLinkedList.partition(head, 7);
         int q = 0;
     }
 }
