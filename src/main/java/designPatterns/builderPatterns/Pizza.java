@@ -1,4 +1,4 @@
-package designPatterns.singleton.builderPatterns;
+package designPatterns.builderPatterns;
 
 /**
  * Created by Nimrod Golan on 21/08/2016.
