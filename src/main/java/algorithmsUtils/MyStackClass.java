@@ -30,7 +30,7 @@ public class MyStackClass<T> {
     }
 
     public void push(T item) {
-        StackNode<T> t = new StackNode<T>(item);
+        StackNode<T> t = new StackNode<>(item);
         t.next = top;
         top = t;
     }
